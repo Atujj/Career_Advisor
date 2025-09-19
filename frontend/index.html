@@ -1,4 +1,3 @@
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -176,10 +175,10 @@
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
     try {
-        const response = await fetch("https://career-advisor-6xrq.onrender.com", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: userMessage })
+        const response = await fetch("http://localhost:4000/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: userMessage })
         });
 
         const data = await response.json();
