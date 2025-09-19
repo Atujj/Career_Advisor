@@ -1,0 +1,204 @@
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Career Guide</title>
+    <!-- Use the Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Load Tailwind CSS from CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117; /* Dark background */
+        }
+        /* Custom scrollbar for a cleaner look */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+        /* Gradient background for the hero section */
+        .hero-bg {
+            background: linear-gradient(180deg, rgba(20,28,40,1) 0%, rgba(10,14,20,1) 100%);
+        }
+        /* Pulse animation for the chat button */
+        .animate-pulse-slow {
+            animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-slow {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200">
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero-bg min-h-screen flex flex-col items-center justify-center text-center p-6">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-white mb-4 animate-fade-in-up">AI Career Guide</h1>
+            <p class="text-xl md:text-2xl text-gray-400 mb-8 animate-fade-in-up delay-100">
+                Unleash your potential with personalized career insights. Discover paths tailored to your passions and skills.
+            </p>
+            <p class="text-sm md:text-base text-gray-500 animate-fade-in-up delay-200">
+                Scroll down to chat with our AI expert.
+            </p>
+        </div>
+    </section>
+
+    <!-- Chatbot trigger section -->
+    <section class="h-96 flex flex-col items-center justify-center p-6">
+        <div id="chat-trigger" class="flex flex-col items-center opacity-0 transition-opacity duration-1000">
+            <button class="bg-gray-800 text-purple-400 p-6 rounded-full shadow-lg border-2 border-purple-600 animate-pulse-slow transition-transform hover:scale-105">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+            </button>
+            <p class="mt-4 text-gray-400 text-lg">Talk to our AI</p>
+        </div>
+    </section>
+
+    <!-- Chat Interface (Modal) -->
+    <div id="chat-modal" class="fixed inset-0 bg-gray-900 bg-opacity-95 backdrop-blur-md hidden flex flex-col transition-all duration-300 ease-in-out z-50">
+        <!-- Chat Header -->
+        <div class="flex items-center justify-between p-4 border-b border-gray-700 bg-gray-800 rounded-t-xl">
+            <h2 class="text-xl font-bold text-white">AI Career Expert</h2>
+            <button id="close-chat-btn" class="text-gray-400 hover:text-white transition-colors duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Chat Messages Container -->
+        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto scrollbar-hide space-y-4">
+            <!-- Initial AI message -->
+            <div class="flex justify-start">
+                <div class="bg-gray-700 text-gray-200 p-3 rounded-xl rounded-tl-none max-w-[80%]">
+                    Hello! I'm your AI Career Guide. I can help you explore career paths based on your interests and skills. What are you passionate about?
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Input Form -->
+        <form id="chat-form" class="p-4 bg-gray-800 border-t border-gray-700 flex items-center gap-2">
+            <input type="text" id="user-input" placeholder="Ask about a career, your skills, or interests..." class="flex-1 p-3 rounded-full bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-200">
+            <button type="submit" class="bg-purple-600 text-white p-3 rounded-full hover:bg-purple-700 transition-colors duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transform rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+            </button>
+        </form>
+    </div>
+
+    <script>
+        const chatTrigger = document.getElementById('chat-trigger');
+        const chatModal = document.getElementById('chat-modal');
+        const closeChatBtn = document.getElementById('close-chat-btn');
+        const chatForm = document.getElementById('chat-form');
+        const userInput = document.getElementById('user-input');
+        const chatMessages = document.getElementById('chat-messages');
+
+        // Show chat trigger on scroll
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY || window.pageYOffset;
+            const triggerOffset = window.innerHeight * 0.5; // Trigger at 50% of viewport height
+            if (scrollY > triggerOffset) {
+                chatTrigger.classList.remove('opacity-0');
+            } else {
+                chatTrigger.classList.add('opacity-0');
+            }
+        });
+
+        // Open chat modal
+        chatTrigger.addEventListener('click', () => {
+            chatModal.style.display = 'flex';
+        });
+
+        // Close chat modal
+        closeChatBtn.addEventListener('click', () => {
+            chatModal.style.display = 'none';
+        });
+
+        // Handle form submission
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const message = userInput.value.trim();
+            if (message) {
+                appendMessage(message, 'user');
+                userInput.value = '';
+                simulateAIResponse(message);
+            }
+        });
+
+        function appendMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('flex', sender === 'user' ? 'justify-end' : 'justify-start');
+
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.classList.add('p-3', 'rounded-xl', 'max-w-[80%]', 'break-words');
+            
+            if (sender === 'user') {
+                bubbleDiv.classList.add('bg-purple-600', 'text-white', 'rounded-br-none');
+            } else {
+                bubbleDiv.classList.add('bg-gray-700', 'text-gray-200', 'rounded-tl-none');
+            }
+
+            bubbleDiv.textContent = text;
+            messageDiv.appendChild(bubbleDiv);
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to bottom
+        }
+
+        async function simulateAIResponse(userMessage) {
+    const typingIndicator = document.createElement('div');
+    typingIndicator.id = 'typing-indicator';
+    typingIndicator.classList.add('flex', 'justify-start');
+    typingIndicator.innerHTML = `
+        <div class="bg-gray-700 text-gray-200 p-3 rounded-xl rounded-tl-none">
+            <div class="flex space-x-1 animate-pulse">
+                <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+            </div>
+        </div>`;
+    chatMessages.appendChild(typingIndicator);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    try {
+        const response = await fetch("http://localhost:4000/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: userMessage })
+        });
+
+        const data = await response.json();
+        chatMessages.removeChild(typingIndicator);
+        appendMessage(data.reply, 'ai');
+    } catch (error) {
+        console.error("Error:", error);
+        chatMessages.removeChild(typingIndicator);
+        appendMessage("⚠️ Sorry, I couldn’t connect right now.", 'ai');
+    }
+}
+
+
+        
+
+        // Initially hide the chat modal
+        window.addEventListener('load', () => {
+            chatModal.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
