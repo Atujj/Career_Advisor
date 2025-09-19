@@ -46,5 +46,5 @@ app.post("/chat", async (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(⁠`🚀 Gemini Career Advisor running at http://localhost:${PORT}`);
+  console.log(`🚀 Gemini Career Advisor running at http://localhost:${PORT}`);
 });
