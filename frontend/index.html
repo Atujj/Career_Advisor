@@ -1,203 +1,1164 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Career Guide</title>
-    <!-- Use the Inter font from Google Fonts -->
+    <title>AI Career Guide - Code Lords</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Load Tailwind CSS from CDN -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0d1117; /* Dark background */
+            background-color: #0d1117;
         }
-        /* Custom scrollbar for a cleaner look */
         .scrollbar-hide::-webkit-scrollbar {
             display: none;
         }
         .scrollbar-hide {
-            -ms-overflow-style: none; /* IE and Edge */
-            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
-        /* Gradient background for the hero section */
         .hero-bg {
-            background: linear-gradient(180deg, rgba(20,28,40,1) 0%, rgba(10,14,20,1) 100%);
+            background: linear-gradient(135deg, rgba(20,28,40,1) 0%, rgba(10,14,20,1) 50%, rgba(15,23,35,1) 100%);
         }
-        /* Pulse animation for the chat button */
         .animate-pulse-slow {
             animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
         @keyframes pulse-slow {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .fade-in {
+            animation: fadeIn 0.6s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .quiz-option {
+            transition: all 0.3s ease;
+        }
+        .quiz-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        .quiz-option.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transform: translateY(-2px);
+        }
+        .section-divider {
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            height: 1px;
+            margin: 2rem 0;
+        }
+        nav {
+            backdrop-filter: blur(20px);
+            background: rgba(13, 17, 23, 0.8);
+        }
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
         }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-200">
 
-    <!-- Hero Section -->
-    <section id="hero" class="hero-bg min-h-screen flex flex-col items-center justify-center text-center p-6">
+    <nav class="fixed top-0 w-full z-50 py-4 px-6">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <span class="text-xl font-bold gradient-text">Code Lords</span>
+            </div>
+            
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#home" class="nav-link text-gray-300 hover:text-white transition-colors">Home</a>
+                <a href="#about" class="nav-link text-gray-300 hover:text-white transition-colors">About</a>
+                <a href="#quiz" class="nav-link text-gray-300 hover:text-white transition-colors">Career Quiz</a>
+                <a href="#resources" class="nav-link text-gray-300 hover:text-white transition-colors">Resources</a>
+                <button id="nav-chat-btn" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    AI Chat
+                </button>
+            </div>
+
+            <button id="mobile-menu-btn" class="md:hidden text-gray-300 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden mt-4 glass-effect rounded-lg p-4">
+            <div class="flex flex-col space-y-3">
+                <a href="#home" class="text-gray-300 hover:text-white transition-colors">Home</a>
+                <a href="#about" class="text-gray-300 hover:text-white transition-colors">About</a>
+                <a href="#quiz" class="text-gray-300 hover:text-white transition-colors">Career Quiz</a>
+                <a href="#resources" class="text-gray-300 hover:text-white transition-colors">Resources</a>
+                <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors text-left">
+                    AI Chat
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <section id="home" class="hero-bg min-h-screen flex flex-col items-center justify-center text-center p-6 pt-20">
+        <div class="max-w-6xl mx-auto">
+            <div class="mb-8">
+                <h1 class="text-6xl md:text-8xl font-bold tracking-tight text-white mb-6">
+                    AI Career <span class="gradient-text">Guide</span>
+                </h1>
+                <p class="text-xl md:text-3xl text-gray-300 mb-8 max-w-4xl mx-auto leading-relaxed">
+                    Discover your perfect career path with AI-powered guidance, personalized assessments, and expert insights
+                </p>
+                
+                <div class="grid md:grid-cols-3 gap-6 mb-12 max-w-4xl mx-auto">
+                    <div class="glass-effect rounded-xl p-6 text-left">
+                        <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">AI-Powered Insights</h3>
+                        <p class="text-gray-400 text-sm">Get personalized career recommendations using advanced Google Gemini AI</p>
+                    </div>
+                    
+                    <div class="glass-effect rounded-xl p-6 text-left">
+                        <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Smart Assessments</h3>
+                        <p class="text-gray-400 text-sm">Take interactive quizzes to discover your strengths and career interests</p>
+                    </div>
+                    
+                    <div class="glass-effect rounded-xl p-6 text-left">
+                        <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Expert Resources</h3>
+                        <p class="text-gray-400 text-sm">Access comprehensive career information, contacts, and guidance materials</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <button id="start-quiz-btn" class="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all transform hover:scale-105">
+                        Take Career Quiz
+                    </button>
+                    <button id="start-chat-btn" class="glass-effect hover:bg-white hover:bg-opacity-10 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all transform hover:scale-105">
+                        Chat with AI Expert
+                    </button>
+                </div>
+            </div>
+
+            <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+                <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="py-20 px-6 bg-gradient-to-b from-gray-900 to-gray-800">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">About Code Lords</h2>
+                <div class="section-divider"></div>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                    Empowering the next generation with cutting-edge AI technology for career guidance and professional development
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h3 class="text-3xl font-bold text-white mb-6">Our Mission</h3>
+                    <p class="text-gray-300 mb-6 leading-relaxed">
+                        At <span class="gradient-text font-semibold">Code Lords</span>, we believe every individual deserves personalized career guidance. Our AI-powered platform combines advanced machine learning with expert career counseling to help students and professionals make informed career decisions.
+                    </p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                            <span class="text-gray-300">AI-powered career assessments</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                            <span class="text-gray-300">Personalized learning paths</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                            <span class="text-gray-300">Industry expert insights</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-8 h-8 bg-yellow-600 rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                            <span class="text-gray-300">Real-time job market analysis</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-effect rounded-2xl p-8">
+                    <h4 class="text-2xl font-bold text-white mb-6">Why Choose Us?</h4>
+                    <div class="space-y-6">
+                        <div>
+                            <h5 class="text-lg font-semibold text-purple-400 mb-2">🤖 Advanced AI Technology</h5>
+                            <p class="text-gray-400 text-sm">Powered by Google Gemini AI for intelligent, contextual career guidance</p>
+                        </div>
+                        <div>
+                            <h5 class="text-lg font-semibold text-blue-400 mb-2">📊 Data-Driven Insights</h5>
+                            <p class="text-gray-400 text-sm">Real-time job market analysis and industry trend predictions</p>
+                        </div>
+                        <div>
+                            <h5 class="text-lg font-semibold text-green-400 mb-2">🎯 Personalized Approach</h5>
+                            <p class="text-gray-400 text-sm">Tailored recommendations based on your unique skills and interests</p>
+                        </div>
+                        <div>
+                            <h5 class="text-lg font-semibold text-yellow-400 mb-2">🚀 Code Lords Innovation</h5>
+                            <p class="text-gray-400 text-sm">Developed by expert developers committed to your success</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="quiz" class="py-20 px-6 bg-gray-900">
         <div class="max-w-4xl mx-auto">
-            <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-white mb-4 animate-fade-in-up">AI Career Guide</h1>
-            <p class="text-xl md:text-2xl text-gray-400 mb-8 animate-fade-in-up delay-100">
-                Unleash your potential with personalized career insights. Discover paths tailored to your passions and skills.
-            </p>
-            <p class="text-sm md:text-base text-gray-500 animate-fade-in-up delay-200">
-                Scroll down to chat with our AI expert.
-            </p>
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">Career Interest Quiz</h2>
+                <div class="section-divider"></div>
+                <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+                    Discover your career interests with our AI-powered assessment. Answer a few questions and get personalized recommendations.
+                </p>
+            </div>
+
+            <div id="quiz-container" class="glass-effect rounded-2xl p-8">
+                <div id="quiz-start" class="text-center">
+                    <div class="w-20 h-20 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-4">Ready to Discover Your Career Path?</h3>
+                    <p class="text-gray-300 mb-8">This quiz will help our AI understand your interests, skills, and preferences to provide personalized career guidance.</p>
+                    
+                    <div class="bg-gray-800 rounded-lg p-6 mb-8">
+                        <h4 class="text-lg font-semibold text-white mb-4">What you'll get:</h4>
+                        <div class="grid md:grid-cols-2 gap-4 text-sm">
+                            <div class="flex items-center gap-2 text-gray-300">
+                                <span class="text-green-400">✓</span>
+                                <span>Personalized career recommendations</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-300">
+                                <span class="text-green-400">✓</span>
+                                <span>Skills assessment and gaps</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-300">
+                                <span class="text-green-400">✓</span>
+                                <span>Learning path suggestions</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-300">
+                                <span class="text-green-400">✓</span>
+                                <span>AI chatbot trained on your profile</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="start-quiz" class="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-all transform hover:scale-105">
+                        Start Quiz (5 minutes)
+                    </button>
+                </div>
+
+                <div id="quiz-questions" class="hidden">
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm text-gray-400">Question <span id="current-question">1</span> of <span id="total-questions">10</span></span>
+                            <div class="text-sm text-gray-400"><span id="progress-percent">10</span>% Complete</div>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2">
+                            <div id="progress-bar" class="bg-gradient-to-r from-purple-600 to-blue-600 h-2 rounded-full transition-all duration-300" style="width: 10%"></div>
+                        </div>
+                    </div>
+
+                    <div id="question-container">
+                        </div>
+
+                    <div class="flex justify-between mt-8">
+                        <button id="prev-question" class="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors" disabled>
+                            Previous
+                        </button>
+                        <button id="next-question" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors" disabled>
+                            Next
+                        </button>
+                    </div>
+                </div>
+
+                <div id="quiz-results" class="hidden">
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-4">Quiz Complete! 🎉</h3>
+                        <p class="text-gray-300 mb-8">Our AI is analyzing your responses to create personalized career recommendations.</p>
+                        
+                        <div id="results-content" class="bg-gray-800 rounded-lg p-6 mb-8 text-left">
+                            <div class="animate-pulse">
+                                <div class="h-4 bg-gray-600 rounded mb-4"></div>
+                                <div class="h-4 bg-gray-600 rounded w-3/4 mb-4"></div>
+                                <div class="h-4 bg-gray-600 rounded w-1/2"></div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <button id="chat-with-results" class="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all transform hover:scale-105">
+                                Chat with AI Expert
+                            </button>
+                            <button id="retake-quiz" class="glass-effect hover:bg-white hover:bg-opacity-10 text-white px-6 py-3 rounded-lg font-semibold transition-all">
+                                Retake Quiz
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- Chatbot trigger section -->
-    <section class="h-96 flex flex-col items-center justify-center p-6">
-        <div id="chat-trigger" class="flex flex-col items-center opacity-0 transition-opacity duration-1000">
-            <button class="bg-gray-800 text-purple-400 p-6 rounded-full shadow-lg border-2 border-purple-600 animate-pulse-slow transition-transform hover:scale-105">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                </svg>
-            </button>
-            <p class="mt-4 text-gray-400 text-lg">Talk to our AI</p>
+    <section id="resources" class="py-20 px-6 bg-gradient-to-b from-gray-800 to-gray-900">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">Career Resources</h2>
+                <div class="section-divider"></div>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    Essential information and contacts for your career journey
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12">
+                <div class="glass-effect rounded-2xl p-8">
+                    <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                        <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                        </svg>
+                        Important Career Contacts
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <h4 class="font-semibold text-purple-400 mb-2">National Career Service (India)</h4>
+                            <p class="text-gray-300 text-sm mb-2">Government career guidance and job portal</p>
+                            <div class="flex items-center gap-2 text-sm">
+                                <span class="text-gray-400">📞</span>
+                                <span class="text-gray-300">1800-425-2626</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm">
+                                <span class="text-gray-400">🌐</span>
+                                <a href="https://www.ncs.gov.in" class="text-blue-400 hover:text-blue-300">www.ncs.gov.in</a>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <h4 class="font-semibold text-green-400 mb-2">AICTE Career Portal</h4>
+                            <p class="text-gray-300 text-sm mb-2">Technical education and career guidance</p>
+                            <div class="flex items-center gap-2 text-sm">
+                                <span class="text-gray-400">📞</span>
+                                <span class="text-gray-300">011-29581000</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm">
+                                <span class="text-gray-400">🌐</span>
+                                <a href="https://www.aicte-india.org" class="text-blue-400 hover:text-blue-300">www.aicte-india.org</a>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <h4 class="font-semibold text-yellow-400 mb-2">IGNOU Student Support</h4>
+                            <p class="text-gray-300 text-sm mb-2">Distance education and career counseling</p>
+                            <div class="flex items-center gap-2 text-sm">
+                                <span class="text-gray-400">📞</span>
+                                <span class="text-gray-300">1800-112-4474</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm">
+                                <span class="text-gray-400">🌐</span>
+                                <a href="https://www.ignou.ac.in" class="text-blue-400 hover:text-blue-300">www.ignou.ac.in</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-effect rounded-2xl p-8">
+                    <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                        <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                        Essential Career Information
+                    </h3>
+
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="text-lg font-semibold text-purple-400 mb-3">🎓 Popular Career Streams</h4>
+                            <div class="grid grid-cols-2 gap-2 text-sm">
+                                <span class="text-gray-300">• Engineering & Technology</span>
+                                <span class="text-gray-300">• Medical & Healthcare</span>
+                                <span class="text-gray-300">• Business & Management</span>
+                                <span class="text-gray-300">• Arts & Humanities</span>
+                                <span class="text-gray-300">• Science & Research</span>
+                                <span class="text-gray-300">• Digital Marketing</span>
+                                <span class="text-gray-300">• Data Science & AI</span>
+                                <span class="text-gray-300">• Creative & Design</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="text-lg font-semibold text-blue-400 mb-3">📊 High-Demand Skills 2024</h4>
+                            <div class="grid grid-cols-2 gap-2 text-sm">
+                                <span class="text-gray-300">• Artificial Intelligence</span>
+                                <span class="text-gray-300">• Cloud Computing</span>
+                                <span class="text-gray-300">• Cybersecurity</span>
+                                <span class="text-gray-300">• Digital Marketing</span>
+                                <span class="text-gray-300">• UX/UI Design</span>
+                                <span class="text-gray-300">• Data Analysis</span>
+                                <span class="text-gray-300">• Project Management</span>
+                                <span class="text-gray-300">• Blockchain</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="text-lg font-semibold text-yellow-400 mb-3">💼 Career Development Tips</h4>
+                            <ul class="space-y-2 text-sm text-gray-300">
+                                <li>• Build a strong online presence and portfolio</li>
+                                <li>• Network actively within your industry</li>
+                                <li>• Continuously upskill and learn new technologies</li>
+                                <li>• Seek mentorship and guidance from experts</li>
+                                <li>• Practice interview skills regularly</li>
+                                <li>• Stay updated with industry trends</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
         </div>
     </section>
 
-    <!-- Chat Interface (Modal) -->
+    <footer class="py-12 px-6 bg-gray-800 border-t border-gray-700">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <span class="text-xl font-bold gradient-text">Code Lords</span>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">Empowering careers with AI-driven insights and personalized guidance.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#home" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
+                        <li><a href="#about" class="text-gray-400 hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="#quiz" class="text-gray-400 hover:text-white transition-colors">Career Quiz</a></li>
+                        <li><a href="#resources" class="text-gray-400 hover:text-white transition-colors">Resources</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="section-divider"></div>
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm">© 2024 Code Lords. All rights reserved. Developed with ❤️ for your career success.</p>
+                <p class="text-gray-400 text-sm mt-2 md:mt-0">Powered by Google Gemini AI</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="floating-chat" class="fixed bottom-6 right-6 z-40">
+        <button class="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white p-4 rounded-full shadow-2xl animate-pulse-slow transition-all transform hover:scale-110">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+            </svg>
+        </button>
+        <div class="absolute -top-12 right-0 bg-gray-800 text-white px-3 py-1 rounded-lg text-sm whitespace-nowrap opacity-0 hover:opacity-100 transition-opacity">
+            Chat with AI Expert
+        </div>
+    </div>
+
     <div id="chat-modal" class="fixed inset-0 bg-gray-900 bg-opacity-95 backdrop-blur-md hidden flex flex-col transition-all duration-300 ease-in-out z-50">
-        <!-- Chat Header -->
-        <div class="flex items-center justify-between p-4 border-b border-gray-700 bg-gray-800 rounded-t-xl">
-            <h2 class="text-xl font-bold text-white">AI Career Expert</h2>
-            <button id="close-chat-btn" class="text-gray-400 hover:text-white transition-colors duration-200">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
+        <div class="flex items-center justify-between p-4 border-b border-gray-700 bg-gray-800">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-white">AI Career Expert</h2>
+                    <p class="text-xs text-gray-400" id="ai-status">Ready to help • Powered by Code Lords</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <button id="home-btn" class="text-gray-400 hover:text-white transition-colors duration-200 p-2" title="Back to Home">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                </button>
+                <button id="minimize-chat" class="text-gray-400 hover:text-white transition-colors duration-200 p-2" title="Minimize chat">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                    </svg>
+                </button>
+                <button id="clear-chat" class="text-gray-400 hover:text-white transition-colors duration-200 p-2" title="Clear chat">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                </button>
+                <button id="close-chat-btn" class="text-gray-400 hover:text-white transition-colors duration-200 p-2" title="Close chat">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
         </div>
 
-        <!-- Chat Messages Container -->
         <div id="chat-messages" class="flex-1 p-4 overflow-y-auto scrollbar-hide space-y-4">
-            <!-- Initial AI message -->
-            <div class="flex justify-start">
-                <div class="bg-gray-700 text-gray-200 p-3 rounded-xl rounded-tl-none max-w-[80%]">
-                    Hello! I'm your AI Career Guide. I can help you explore career paths based on your interests and skills. What are you passionate about?
+            <div class="flex justify-start fade-in">
+                <div class="bg-gray-700 text-gray-200 p-4 rounded-xl rounded-tl-none max-w-[85%] chat-message">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                        <span class="text-xs text-gray-400">AI Career Expert by Code Lords</span>
+                    </div>
+                    <p class="mb-3">Hello! I'm your AI Career Guide, developed by Code Lords team. I'm here to provide personalized career guidance based on:</p>
+                    <ul class="text-sm text-gray-300 space-y-1 mb-3">
+                        <li>• Your skills, interests, and experience level</li>
+                        <li>• Current job market trends and opportunities</li>
+                        <li>• Industry growth predictions and salary insights</li>
+                        <li>• Learning paths and certification recommendations</li>
+                    </ul>
+                    <p>Have you taken our career quiz yet? It helps me understand your interests better! What would you like to know about your career journey?</p>
                 </div>
             </div>
         </div>
 
-        <!-- Chat Input Form -->
-        <form id="chat-form" class="p-4 bg-gray-800 border-t border-gray-700 flex items-center gap-2">
-            <input type="text" id="user-input" placeholder="Ask about a career, your skills, or interests..." class="flex-1 p-3 rounded-full bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-200">
-            <button type="submit" class="bg-purple-600 text-white p-3 rounded-full hover:bg-purple-700 transition-colors duration-200">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transform rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                </svg>
-            </button>
+        <div id="suggested-questions" class="px-4 py-2 border-t border-gray-700">
+            <p class="text-xs text-gray-400 mb-2">Quick questions to get started:</p>
+            <div class="flex flex-wrap gap-2">
+                <button class="suggestion-btn text-xs bg-gray-700 hover:bg-purple-600 text-gray-300 hover:text-white px-3 py-1 rounded-full transition-colors">
+                    What careers match my interests?
+                </button>
+                <button class="suggestion-btn text-xs bg-gray-700 hover:bg-purple-600 text-gray-300 hover:text-white px-3 py-1 rounded-full transition-colors">
+                    Latest tech industry trends
+                </button>
+                <button class="suggestion-btn text-xs bg-gray-700 hover:bg-purple-600 text-gray-300 hover:text-white px-3 py-1 rounded-full transition-colors">
+                    How to transition careers?
+                </button>
+                <button class="suggestion-btn text-xs bg-gray-700 hover:bg-purple-600 text-gray-300 hover:text-white px-3 py-1 rounded-full transition-colors">
+                    Skills in demand for 2024
+                </button>
+            </div>
+        </div>
+
+        <form id="chat-form" class="p-4 bg-gray-800 border-t border-gray-700">
+            <div class="flex items-center gap-2">
+                <input type="text" id="user-input" placeholder="Ask about careers, skills, or get personalized advice..." class="flex-1 p-3 rounded-full bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-200">
+                <button type="submit" id="send-btn" class="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white p-3 rounded-full transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <svg class="w-6 h-6 transform rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    </svg>
+                </button>
+            </div>
+            <p class="text-xs text-gray-500 mt-2">💡 Tip: Take our career quiz first for more personalized recommendations!</p>
         </form>
     </div>
 
     <script>
-        const chatTrigger = document.getElementById('chat-trigger');
+        // Configuration
+        const BACKEND_URL = 'https://career-advisor-6xrq.onrender.com';
+        
+        // User profile data (populated from quiz)
+        let userProfile = {
+            interests: [],
+            skills: [],
+            experience: '',
+            workStyle: '',
+            careerGoals: '',
+            quizCompleted: false
+        };
+
+        // Quiz data
+        const quizQuestions = [
+            {
+                id: 1,
+                question: "What type of activities do you enjoy most?",
+                options: [
+                    { text: "Solving complex problems and puzzles", value: "analytical" },
+                    { text: "Creating and designing things", value: "creative" },
+                    { text: "Working with and helping people", value: "people-oriented" },
+                    { text: "Leading projects and making decisions", value: "leadership" }
+                ]
+            },
+            {
+                id: 2,
+                question: "Which work environment appeals to you most?",
+                options: [
+                    { text: "Quiet office with minimal distractions", value: "focused" },
+                    { text: "Collaborative open workspace", value: "collaborative" },
+                    { text: "Flexible remote work setup", value: "remote" },
+                    { text: "Dynamic, fast-paced environment", value: "dynamic" }
+                ]
+            },
+            {
+                id: 3,
+                question: "What motivates you most in your work?",
+                options: [
+                    { text: "Financial success and stability", value: "financial" },
+                    { text: "Making a positive impact on society", value: "impact" },
+                    { text: "Personal growth and learning", value: "growth" },
+                    { text: "Recognition and achievement", value: "recognition" }
+                ]
+            },
+            {
+                id: 4,
+                question: "Which subject areas interest you most?",
+                options: [
+                    { text: "Science, Technology, Engineering", value: "stem" },
+                    { text: "Business, Economics, Finance", value: "business" },
+                    { text: "Arts, Literature, Communication", value: "arts" },
+                    { text: "Healthcare, Psychology, Social Work", value: "healthcare" }
+                ]
+            },
+            {
+                id: 5,
+                question: "How do you prefer to work?",
+                options: [
+                    { text: "Independently with minimal supervision", value: "independent" },
+                    { text: "As part of a close-knit team", value: "team" },
+                    { text: "Leading and managing others", value: "management" },
+                    { text: "Following clear instructions and procedures", value: "structured" }
+                ]
+            },
+            {
+                id: 6,
+                question: "What's your ideal work schedule?",
+                options: [
+                    { text: "Traditional 9-5 weekdays", value: "traditional" },
+                    { text: "Flexible hours based on projects", value: "flexible" },
+                    { text: "Part-time or freelance work", value: "parttime" },
+                    { text: "Intensive periods with breaks", value: "intensive" }
+                ]
+            },
+            {
+                id: 7,
+                question: "Which skills do you want to develop most?",
+                options: [
+                    { text: "Technical and programming skills", value: "technical" },
+                    { text: "Communication and presentation", value: "communication" },
+                    { text: "Leadership and management", value: "leadership-skills" },
+                    { text: "Creative and artistic abilities", value: "creative-skills" }
+                ]
+            },
+            {
+                id: 8,
+                question: "What's your preferred learning style?",
+                options: [
+                    { text: "Hands-on practical experience", value: "practical" },
+                    { text: "Reading and self-study", value: "theoretical" },
+                    { text: "Group discussions and workshops", value: "collaborative-learning" },
+                    { text: "Online courses and tutorials", value: "digital" }
+                ]
+            },
+            {
+                id: 9,
+                question: "Which industry excites you most?",
+                options: [
+                    { text: "Technology and Software", value: "tech" },
+                    { text: "Healthcare and Medicine", value: "healthcare-industry" },
+                    { text: "Education and Training", value: "education" },
+                    { text: "Finance and Consulting", value: "finance" }
+                ]
+            },
+            {
+                id: 10,
+                question: "What's your career timeline preference?",
+                options: [
+                    { text: "Quick entry with immediate income", value: "quick" },
+                    { text: "Long-term investment in education", value: "longterm" },
+                    { text: "Gradual skill building while working", value: "gradual" },
+                    { text: "Career change from current field", value: "transition" }
+                ]
+            }
+        ];
+
+        // DOM elements
         const chatModal = document.getElementById('chat-modal');
-        const closeChatBtn = document.getElementById('close-chat-btn');
+        const chatMessages = document.getElementById('chat-messages');
         const chatForm = document.getElementById('chat-form');
         const userInput = document.getElementById('user-input');
-        const chatMessages = document.getElementById('chat-messages');
+        const sendBtn = document.getElementById('send-btn');
+        const aiStatus = document.getElementById('ai-status');
+        
+        // Quiz elements
+        const quizContainer = document.getElementById('quiz-container');
+        const quizStart = document.getElementById('quiz-start');
+        const quizQuestionsElement = document.getElementById('quiz-questions');
+        const quizResults = document.getElementById('quiz-results');
+        const questionContainer = document.getElementById('question-container');
+        const currentQuestionSpan = document.getElementById('current-question');
+        const totalQuestionsSpan = document.getElementById('total-questions');
+        const progressBar = document.getElementById('progress-bar');
+        const progressPercent = document.getElementById('progress-percent');
+        
+        let currentQuestion = 0;
+        let quizAnswers = {};
 
-        // Show chat trigger on scroll
-        window.addEventListener('scroll', () => {
-            const scrollY = window.scrollY || window.pageYOffset;
-            const triggerOffset = window.innerHeight * 0.5; // Trigger at 50% of viewport height
-            if (scrollY > triggerOffset) {
-                chatTrigger.classList.remove('opacity-0');
-            } else {
-                chatTrigger.classList.add('opacity-0');
-            }
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            setupNavigation();
+            checkUserProfile();
         });
 
-        // Open chat modal
-        chatTrigger.addEventListener('click', () => {
-            chatModal.style.display = 'flex';
-        });
-
-        // Close chat modal
-        closeChatBtn.addEventListener('click', () => {
-            chatModal.style.display = 'none';
-        });
-
-        // Handle form submission
-        chatForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const message = userInput.value.trim();
-            if (message) {
-                appendMessage(message, 'user');
-                userInput.value = '';
-                simulateAIResponse(message);
-            }
-        });
-
-        function appendMessage(text, sender) {
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('flex', sender === 'user' ? 'justify-end' : 'justify-start');
-
-            const bubbleDiv = document.createElement('div');
-            bubbleDiv.classList.add('p-3', 'rounded-xl', 'max-w-[80%]', 'break-words');
+        function setupEventListeners() {
+            // Chat buttons
+            document.getElementById('start-chat-btn')?.addEventListener('click', openChat);
+            document.getElementById('nav-chat-btn')?.addEventListener('click', openChat);
+            document.getElementById('floating-chat')?.addEventListener('click', openChat);
             
-            if (sender === 'user') {
-                bubbleDiv.classList.add('bg-purple-600', 'text-white', 'rounded-br-none');
-            } else {
-                bubbleDiv.classList.add('bg-gray-700', 'text-gray-200', 'rounded-tl-none');
-            }
+            // Chat controls
+            document.getElementById('close-chat-btn')?.addEventListener('click', closeChat);
+            document.getElementById('minimize-chat')?.addEventListener('click', minimizeChat);
+            document.getElementById('home-btn')?.addEventListener('click', goToHome);
+            document.getElementById('clear-chat')?.addEventListener('click', clearChat);
+            
+            // Quiz buttons
+            document.getElementById('start-quiz-btn')?.addEventListener('click', scrollToQuiz);
+            document.getElementById('start-quiz')?.addEventListener('click', startQuiz);
+            document.getElementById('next-question')?.addEventListener('click', nextQuestion);
+            document.getElementById('prev-question')?.addEventListener('click', prevQuestion);
+            document.getElementById('retake-quiz')?.addEventListener('click', retakeQuiz);
+            
+            // Chat form
+            chatForm?.addEventListener('submit', handleChatSubmit);
+            
+            // Suggested questions
+            document.querySelectorAll('.suggestion-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    userInput.value = btn.textContent;
+                    handleChatSubmit(new Event('submit'));
+                });
+            });
 
-            bubbleDiv.textContent = text;
-            messageDiv.appendChild(bubbleDiv);
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to bottom
+            // Mobile menu
+            document.getElementById('mobile-menu-btn')?.addEventListener('click', toggleMobileMenu);
         }
 
-        async function simulateAIResponse(userMessage) {
-    const typingIndicator = document.createElement('div');
-    typingIndicator.id = 'typing-indicator';
-    typingIndicator.classList.add('flex', 'justify-start');
-    typingIndicator.innerHTML = `
-        <div class="bg-gray-700 text-gray-200 p-3 rounded-xl rounded-tl-none">
-            <div class="flex space-x-1 animate-pulse">
-                <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
-                <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
-                <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
-            </div>
-        </div>`;
-    chatMessages.appendChild(typingIndicator);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+        function setupNavigation() {
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const target = document.querySelector(link.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
 
-    try {
-        const response = await fetch("https://career-advisor-6xrq.onrender.com/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message: userMessage })
-        });
+            // Update active nav link on scroll
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - 100;
+                    if (window.pageYOffset >= sectionTop) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${current}`) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        }
 
-        const data = await response.json();
-        chatMessages.removeChild(typingIndicator);
-        appendMessage(data.reply, 'ai');
-    } catch (error) {
-        console.error("Error:", error);
-        chatMessages.removeChild(typingIndicator);
-        appendMessage("⚠️ Sorry, I couldn’t connect right now.", 'ai');
-    }
-}
+        function checkUserProfile() {
+            const saved = localStorage.getItem('userProfile');
+            if (saved) {
+                userProfile = JSON.parse(saved);
+                if (userProfile.quizCompleted) {
+                    updateAIWithProfile();
+                }
+            }
+        }
 
+        function scrollToQuiz() {
+            document.getElementById('quiz').scrollIntoView({ behavior: 'smooth' });
+        }
 
-        
+        function startQuiz() {
+            quizStart.classList.add('hidden');
+            quizQuestionsElement.classList.remove('hidden');
+            currentQuestion = 0;
+            quizAnswers = {};
+            totalQuestionsSpan.textContent = quizQuestions.length;
+            showQuestion();
+        }
 
-        // Initially hide the chat modal
-        window.addEventListener('load', () => {
+        function showQuestion() {
+            const question = quizQuestions[currentQuestion];
+            currentQuestionSpan.textContent = currentQuestion + 1;
+            
+            const progress = ((currentQuestion + 1) / quizQuestions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            progressPercent.textContent = Math.round(progress);
+
+            questionContainer.innerHTML = `
+                <div class="fade-in">
+                    <h4 class="text-xl font-semibold text-white mb-6">${question.question}</h4>
+                    <div class="space-y-3">
+                        ${question.options.map(option => `
+                            <div class="quiz-option bg-gray-800 hover:bg-gray-700 p-4 rounded-lg cursor-pointer transition-all ${quizAnswers[question.id] === option.value ? 'selected' : ''}" data-value="${option.value}">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-4 h-4 border-2 border-gray-400 rounded-full flex items-center justify-center">
+                                        <div class="w-2 h-2 bg-white rounded-full ${quizAnswers[question.id] === option.value ? '' : 'hidden'}"></div>
+                                    </div>
+                                    <span class="text-gray-300">${option.text}</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            // Add click listeners to options
+            questionContainer.querySelectorAll('.quiz-option').forEach(option => {
+                option.addEventListener('click', () => selectOption(option));
+            });
+
+            // Update button states
+            document.getElementById('prev-question').disabled = currentQuestion === 0;
+            document.getElementById('next-question').disabled = !quizAnswers[question.id];
+        }
+
+        function selectOption(selectedOption) {
+            const question = quizQuestions[currentQuestion];
+            const value = selectedOption.dataset.value;
+            
+            // Remove selection from all options
+            questionContainer.querySelectorAll('.quiz-option').forEach(opt => {
+                opt.classList.remove('selected');
+                opt.querySelector('.w-2').classList.add('hidden');
+            });
+            
+            // Select clicked option
+            selectedOption.classList.add('selected');
+            selectedOption.querySelector('.w-2').classList.remove('hidden');
+            
+            // Save answer
+            quizAnswers[question.id] = value;
+            
+            // Enable next button
+            document.getElementById('next-question').disabled = false;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < quizQuestions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+            }
+        }
+
+        async function finishQuiz() {
+            quizQuestionsElement.classList.add('hidden');
+            quizResults.classList.remove('hidden');
+            
+            // Process quiz results
+            await processQuizResults();
+        }
+
+        async function processQuizResults() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/quiz-analysis`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ answers: quizAnswers })
+                });
+
+                const data = await response.json();
+                
+                // Update user profile
+                userProfile = {
+                    ...userProfile,
+                    ...data.profile,
+                    quizCompleted: true
+                };
+                
+                localStorage.setItem('userProfile', JSON.stringify(userProfile));
+                
+                // Display results
+                document.getElementById('results-content').innerHTML = `
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="text-lg font-semibold text-purple-400 mb-2">🎯 Your Career Profile</h4>
+                            <p class="text-gray-300 text-sm">${data.analysis}</p>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-blue-400 mb-2">💼 Recommended Careers</h4>
+                            <div class="space-y-2">
+                                ${data.recommendations.map(rec => `
+                                    <div class="bg-gray-700 rounded p-3">
+                                        <div class="font-medium text-white">${rec.title}</div>
+                                        <div class="text-gray-300 text-sm">${rec.description}</div>
+                                        <div class="text-gray-400 text-xs mt-1">Match: ${rec.match}%</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-green-400 mb-2">🚀 Next Steps</h4>
+                            <ul class="text-gray-300 text-sm space-y-1">
+                                ${data.nextSteps.map(step => `<li>• ${step}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+                
+                updateAIWithProfile();
+                
+            } catch (error) {
+                console.error('Quiz processing error:', error);
+                document.getElementById('results-content').innerHTML = `
+                    <div class="text-center text-gray-400">
+                        <p>Unable to process quiz results at the moment.</p>
+                        <p class="text-sm mt-2">Please try again later or chat with our AI for personalized guidance.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function retakeQuiz() {
+            quizResults.classList.add('hidden');
+            quizStart.classList.remove('hidden');
+            currentQuestion = 0;
+            quizAnswers = {};
+            userProfile.quizCompleted = false;
+            localStorage.setItem('userProfile', JSON.stringify(userProfile));
+        }
+
+        function updateAIWithProfile() {
+            // Update AI status to show profile is loaded
+            if (userProfile.quizCompleted) {
+                aiStatus.textContent = 'Profile loaded • Ready for personalized guidance';
+            }
+        }
+
+        // Chat functions
+        function openChat() {
+            chatModal.style.display = 'flex';
+            userInput.focus();
+        }
+
+        function closeChat() {
             chatModal.style.display = 'none';
-        });
+        }
+
+        function minimizeChat() {
+            chatModal.style.display = 'none';
+        }
+
+        function goToHome() {
+            chatModal.style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function clearChat() {
+            chatMessages.innerHTML = `
+                <div class="flex justify-start fade-in">
+                    <div class="bg-gray-700 text-gray-200 p-4 rounded-xl rounded-tl-none max-w-[85%] chat-message">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                            <span class="text-xs text-gray-400">AI Career Expert by Code Lords</span>
+                        </div>
+                        <p>Chat cleared! How can I help you with your career today?</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function handleChatSubmit(e) {
+            e.preventDefault();
+            const message = userInput.value.trim();
+            
+            if (!message) return;
+
+            setInputState(false);
+            appendMessage(message, 'user');
+            userInput.value = '';
+
+            const typingIndicator = showTypingIndicator();
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        message, 
+                        userProfile: userProfile.quizCompleted ? userProfile : null 
+                    })
+                });
+
+                const data = await response.json();
+                chatMessages.removeChild(typingIndicator);
+                appendMessage(data.reply, 'ai');
+                
+            } catch (error) {
+                console.error('Chat error:', error);
+                chatMessages.removeChild(typingIndicator);
+                appendMessage(
+                    "I'm having trouble connecting right now. Please check if the backend server is running or try again later.",
+                    'ai',
+                    true
+                );
+            }
+
+            setInputState(true);
+        }
+
+        function appendMessage(text, sender, isError = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('flex', sender === 'user' ? 'justify-end' : 'justify-start', 'fade-in');
+
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.classList.add('p-4', 'rounded-xl', 'max-w-[85%]', 'chat-message');
+            
+            if (sender === 'user') {
+                bubbleDiv.classList.add('bg-gradient-to-r', 'from-purple-600', 'to-blue-600', 'text-white', 'rounded-br-none');
+            } else {
+                bubbleDiv.classList.add('bg-gray-700', 'text-gray-200', 'rounded-tl-none');
+                if (isError) {
+                    bubbleDiv.classList.add('border-l-4', 'border-red-500');
+                }
+                
+                const indicator = document.createElement('div');
+                indicator.classList.add('flex', 'items-center', 'gap-2', 'mb-2');
+                indicator.innerHTML = `
+                    <div class="w-2 h-2 ${isError ? 'bg-red-400' : 'bg-green-400'} rounded-full animate-pulse"></div>
+                    <span class="text-xs text-gray-400">AI Career Expert by Code Lords</span>
+                `;
+                bubbleDiv.appendChild(indicator);
+            }
+
+            const textContent = document.createElement('div');
+            // Convert Markdown to HTML
+            textContent.innerHTML = marked.parse(text);
+            bubbleDiv.appendChild(textContent);
+
+            messageDiv.appendChild(bubbleDiv);
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.classList.add('flex', 'justify-start');
+            typingDiv.innerHTML = `
+                <div class="bg-gray-700 text-gray-200 p-4 rounded-xl rounded-tl-none">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                        <span class="text-xs text-gray-400">AI Career Expert by Code Lords</span>
+                    </div>
+                    <div class="flex space-x-1">
+                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            return typingDiv;
+        }
+
+        function setInputState(enabled) {
+            userInput.disabled = !enabled;
+            sendBtn.disabled = !enabled;
+            if (enabled) {
+                userInput.focus();
+                aiStatus.textContent = userProfile.quizCompleted ? 'Profile loaded • Ready for personalized guidance' : 'Ready to help • Powered by Code Lords';
+            } else {
+                aiStatus.textContent = 'Thinking...';
+            }
+        }
+
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        }
+
+        // Initialize chat modal as hidden
+        chatModal.style.display = 'none';
     </script>
 </body>
 </html>
